@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class PlayerFreeLookState : PlayerBaseState
 {
-    public PlayerFreeLookState(PlayerStateMachine stateMachine) : base(stateMachine)
-    {
-        
-    }
+    public PlayerFreeLookState(PlayerStateMachine stateMachine) : base(stateMachine){}
+
+    /*
+     * Animation variables
+     */
+    private readonly int FreeLookSpeedHash = Animator.StringToHash("FreeLookSpeed");
+    private const float AnimationDampTime = 0.1f;
+
+
     public override void Enter()
     {
         Debug.Log("We have entered the PlayerFreeLookState");
@@ -48,6 +53,18 @@ public class PlayerFreeLookState : PlayerBaseState
 
     private void FaceMovementDirection(float deltaTime)
     {
+        //Animation handling
+        //If we are not moving play idle animation
+        if(stateMachine.inputReader.MovementValue==Vector2.zero)
+        {
+            stateMachine.animator.SetFloat(FreeLookSpeedHash, 0, AnimationDampTime, deltaTime);
+            return;
+        }
+        //If we are moving play running/walking animation
+        stateMachine.animator.SetFloat(FreeLookSpeedHash, 1, AnimationDampTime, deltaTime);
+        
+
+        //Camera rotation handling
         stateMachine.transform.rotation = Quaternion.Lerp(stateMachine.transform.rotation, Quaternion.LookRotation(stateMachine.Movement), deltaTime * stateMachine.RotationDampaning);
     }
 }

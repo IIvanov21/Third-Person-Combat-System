@@ -20,6 +20,20 @@ public class PlayerStateMachine : StateMachine
     public float FreeLookMovementSpeed { get; private set; }
     public Transform MainCameraTransform;
 
+    /*
+     * Animation controls
+     */
+    [field:SerializeField]
+    public Animator animator { get; private set; }
+
+    /*
+     * Target controls
+     */
+    [field: SerializeField]
+    public Targeter targeter { get; private set; }
+    [field: SerializeField]
+    public float TargetingMovementSpeed { get; private set; }
+
     private void Start()
     {
         SwitchState(new PlayerFreeLookState(this));
