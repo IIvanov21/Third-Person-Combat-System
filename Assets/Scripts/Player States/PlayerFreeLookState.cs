@@ -9,6 +9,7 @@ public class PlayerFreeLookState : PlayerBaseState
     /*
      * Animation variables
      */
+    private readonly int FreeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
     private readonly int FreeLookSpeedHash = Animator.StringToHash("FreeLookSpeed");
     private const float AnimationDampTime = 0.1f;
 
@@ -16,20 +17,23 @@ public class PlayerFreeLookState : PlayerBaseState
     public override void Enter()
     {
         Debug.Log("We have entered the PlayerFreeLookState");
+        stateMachine.animator.CrossFadeInFixedTime(FreeLookBlendTreeHash,AnimationDampTime);
+        stateMachine.inputReader.TargetEvent += OnTarget;
     }
 
     public override void Tick(float deltaTime)
     {
         stateMachine.Movement = CalculateMovement();
 
-        stateMachine.characterController.Move(stateMachine.Movement * deltaTime * stateMachine.FreeLookMovementSpeed);
+        
+        Move(stateMachine.Movement * stateMachine.FreeLookMovementSpeed, deltaTime);
 
         FaceMovementDirection(deltaTime);
     }
 
     public override void Exit()
     {
-
+        stateMachine.inputReader.TargetEvent -= OnTarget;
     }
 
     Vector3 CalculateMovement()
@@ -66,5 +70,16 @@ public class PlayerFreeLookState : PlayerBaseState
 
         //Camera rotation handling
         stateMachine.transform.rotation = Quaternion.Lerp(stateMachine.transform.rotation, Quaternion.LookRotation(stateMachine.Movement), deltaTime * stateMachine.RotationDampaning);
+    }
+
+    private void OnTarget()
+    {
+        //If there is no target, ignore the atempt to target an object
+        if (!stateMachine.targeter.SelectTarget()) return;
+
+        //If there is a target
+        stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
+
+
     }
 }

@@ -24,6 +24,23 @@ public class PlayerTargetingState : PlayerBaseState
 
     public override void Tick(float deltaTime)
     {
+        //If there is no target, we want to switch back to our Player Free Look State
+        if (stateMachine.targeter.currentTarget == null)
+        {
+            stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
+        }
+
+        //Calculate normal movement
+        stateMachine.Movement = CalculateMovement();
+       
+        Move(stateMachine.Movement*stateMachine.TargetingMovementSpeed,deltaTime);
+
+        //Face the target
+        FaceTarget();
+
+        //Update Animations
+        UpdateAnimator(deltaTime);
+
     }
 
     public override void Exit()
@@ -67,14 +84,5 @@ public class PlayerTargetingState : PlayerBaseState
 
     }
 
-    private void FaceTarget()
-    {
-        if (stateMachine.targeter.currentTarget == null) return;
-
-        Vector3 facingVector = stateMachine.targeter.currentTarget.transform.position - stateMachine.transform.position;
-
-        facingVector.y = 0;
-
-        stateMachine.transform.rotation = Quaternion.LookRotation(facingVector);
-    }
+    
 }

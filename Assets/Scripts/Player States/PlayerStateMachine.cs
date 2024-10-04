@@ -34,6 +34,12 @@ public class PlayerStateMachine : StateMachine
     [field: SerializeField]
     public float TargetingMovementSpeed { get; private set; }
 
+    /*
+     * Attacking references
+     */
+    [field: SerializeField]public ForceReceiver forceReceiver {  get; private set; }
+    [field: SerializeField]public WeaponDamage weaponDamage { get; private set; }
+    [field: SerializeField]public Attack[] Attacks { get; private set; }
     private void Start()
     {
         SwitchState(new PlayerFreeLookState(this));
