@@ -24,6 +24,12 @@ public class PlayerTargetingState : PlayerBaseState
 
     public override void Tick(float deltaTime)
     {
+        if(stateMachine.inputReader.IsAttacking)
+        {
+            stateMachine.SwitchState(new PlayerAttackingState(stateMachine, 0));
+            return;//We want to transition to the Player Attack State straight away.
+        }
+
         //If there is no target, we want to switch back to our Player Free Look State
         if (stateMachine.targeter.currentTarget == null)
         {

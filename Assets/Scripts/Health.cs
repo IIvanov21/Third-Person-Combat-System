@@ -17,6 +17,6 @@ public class Health : MonoBehaviour
     {
         if (health >= 1) health -= damage;
         if (health <= 0) Destroy(gameObject);
-        Debug.Log(health);
+        Debug.Log(this.gameObject.name+": "+health);
     }
 }
